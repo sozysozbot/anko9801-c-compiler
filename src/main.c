@@ -1,7 +1,7 @@
 #include "hcc.h"
-
+#if 0
 FILE *stderr = -1282248128;
-
+#endif
 // 指定されたファイルの内容を返す
 char *read_file(char *path) {
 	// ファイルを開く

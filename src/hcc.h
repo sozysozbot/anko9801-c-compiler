@@ -197,11 +197,11 @@ void error_at(char *loc, char *fmt, ...);
  * セルフホストの為のプロトタイプ宣言
  */
 
-typedef int size_t;
+
 // malloc系
 void *calloc(int nitems, int size);
-void *malloc (size_t size);
-void *realloc(void *ptr, size_t size);
+void *malloc (int size);
+void *realloc(void *ptr, int size);
 
 // 文字列系
 int strncmp(char *str1, char *str2, int num);
@@ -219,7 +219,7 @@ typedef struct FILE {
 } FILE;
 FILE *fopen(char *path, char *mode);
 int fseek(FILE *stream, long int offset, int whence);
-size_t fread ( void * ptr, size_t size, size_t count, FILE * stream );
+int fread ( void * ptr, int size, int count, FILE * stream );
 int fclose ( FILE * stream );
 long int ftell ( FILE * stream );
 #define SEEK_SET 1

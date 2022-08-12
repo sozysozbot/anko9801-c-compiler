@@ -106,6 +106,54 @@ Token *preprocessor(Token *tok) {
 
 				continue;
 
+			}else if (preconsume(&tok, "endif")) {
+				tok = tok->next;
+
+				// 改行までいったら終了
+				Token *end;
+				while (true) {
+					if (*(tok->next->str) == '\\') {
+						tok->next = tok->next->next;
+					}
+					// \n
+					// dfd\n
+					if (*(tok->str) != '\\' && *(tok->str + tok->len) == '\n') {
+						end = tok->next;
+						tok->next = NULL;
+						break;
+					}
+					tok = tok->next;
+				}
+
+				// endif文を消す
+				begin->next = end;
+				tok = begin;
+
+				continue;
+			}else if (preconsume(&tok, "ifndef")) {
+				tok = tok->next;
+
+				// 改行までいったら終了
+				Token *end;
+				while (true) {
+					if (*(tok->next->str) == '\\') {
+						tok->next = tok->next->next;
+					}
+					// \n
+					// dfd\n
+					if (*(tok->str) != '\\' && *(tok->str + tok->len) == '\n') {
+						end = tok->next;
+						tok->next = NULL;
+						break;
+					}
+					tok = tok->next;
+				}
+
+				// endif文を消す
+				begin->next = end;
+				tok = begin;
+
+				continue;
 			}else if (preconsume(&tok, "include")) {
 				// begin: #の前, end: 
 				Token *end, *src = NULL;
