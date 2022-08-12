@@ -1214,7 +1214,7 @@ Node *stmt() {
 			Else = stmts();
 		else
 			Else = NULL;
-		printf(stderr, "if end\n");
+		fprintf(stderr, "if end\n");
 
 		node = new_node_if(ND_IF, Cond, Then, Else);
 
@@ -1724,7 +1724,7 @@ Node *global() {
 	node = variable_decl(1);
 	if (node) return node;
 	node = func_decl_or_def();
-	printf(stderr, "stmt end\n");
+	fprintf(stderr, "stmt end\n");
 	if (node) return node;
 
 	return stmt();

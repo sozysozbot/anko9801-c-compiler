@@ -192,6 +192,7 @@ extern Vec *aggr_list;
 void error(char *fmt, ...);
 void error_at(char *loc, char *fmt, ...);
 
+#ifndef __STDC__
 /*
  * セルフホストの為のプロトタイプ宣言
  */
@@ -247,3 +248,4 @@ void exit(int status);
 
 void cu();
 void print_variable_scope(Hashs *hash, int tab);
+#endif
