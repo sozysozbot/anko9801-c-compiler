@@ -218,10 +218,10 @@ void gen_extern(Func *extern_funcs) {
 		printf(".extern ");
 
 		while (extern_funcs->next) {
-			printf("_%s, ", get_name(extern_funcs->name, extern_funcs->len));
+			printf("%s, ", get_name(extern_funcs->name, extern_funcs->len));
 			extern_funcs = extern_funcs->next;
 		}
-		printf("_%s\n", get_name(extern_funcs->name, extern_funcs->len));
+		printf("%s\n", get_name(extern_funcs->name, extern_funcs->len));
 	}
 }
 
@@ -230,10 +230,10 @@ void gen_funcs(Func *funcs) {
 		printf(".global ");
 
 		while (funcs->next) {
-			printf("_%s, ", get_name(funcs->name, funcs->len));
+			printf("%s, ", get_name(funcs->name, funcs->len));
 			funcs = funcs->next;
 		}
-		printf("_%s\n", get_name(funcs->name, funcs->len));
+		printf("%s\n", get_name(funcs->name, funcs->len));
 	}
 }
 
@@ -719,11 +719,11 @@ void gen(Node *node) {
 
 		printf("	test rsp, 15\n");
 		printf("	jne .call.else%d\n", call_cnt);
-		printf("	call _%s\n", get_name(node->name, node->len));
+		printf("	call %s\n", get_name(node->name, node->len));
 		printf("	jmp .call.end%d\n", call_cnt);
 		printf(".call.else%d:\n", call_cnt);
 		printf("	push rsi\n");
-		printf("	call _%s\n", get_name(node->name, node->len));
+		printf("	call %s\n", get_name(node->name, node->len));
 		printf("	pop rsi\n");
 		printf(".call.end%d:\n", call_cnt);
 
@@ -732,7 +732,7 @@ void gen(Node *node) {
 		return;
 
 	case ND_DEF:
-		printf("_%s:\n", get_name(node->name, node->len));
+		printf("%s:\n", get_name(node->name, node->len));
 		gen_push("rbp");
 		printf("	mov rbp, rsp\n");
 		Hashs *hash = search_hash(hashs, node);
