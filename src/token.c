@@ -28,8 +28,8 @@ Token *new_token(TokenKind kind, Token *cur, char *str, int line) {
 bool is_reserved(char **p, Token **cur, char *str) {
 	if (!strncmp(*p, str, strlen(str)) && !is_alnum((*p)[strlen(str)])) {
 		*cur = new_token(TK_RESERVED, *cur, *p, line);
-		//fprintf(stderr, "(%s)", str);
 		(*cur)->len = strlen(str);
+		/* fprintf(stderr, "%s, %d\n", str, (*cur)->len); */
 		*p += strlen(str);
 		return true;
 	}
@@ -39,8 +39,8 @@ bool is_reserved(char **p, Token **cur, char *str) {
 bool is_reserved_sign(char **p, Token **cur, char *str) {
 	if (!strncmp(*p, str, strlen(str))) {
 		*cur = new_token(TK_RESERVED, *cur, *p, line);
-		//fprintf(stderr, "(%s)", str);
 		(*cur)->len = strlen(str);
+		/* fprintf(stderr, "%s, %d\n", str, (*cur)->len); */
 		*p += strlen(str);
 		return true;
 	}
@@ -51,6 +51,7 @@ bool is_reserved_sign(char **p, Token **cur, char *str) {
 Token *tokenize(char *p) {
 	Token head;
 	head.next = NULL;
+	head.kind = TK_EOF;
 	Token *cur = &head;
 	int commented = 0;
 	int string = 0;
@@ -59,7 +60,6 @@ Token *tokenize(char *p) {
 		if (string == 1) {
 			int len = 0;
 			while (*p != '\'') {
-				//fprintf(stderr, "%c", *p);
 				if (*p == '\\') {
 					p++;
 					len++;
@@ -67,9 +67,8 @@ Token *tokenize(char *p) {
 				p++;
 				len++;
 			}
-			cur = new_token(TK_STRING, cur, p-len, line);
+			cur = new_token(TK_STRING, cur, p - len, line);
 			cur->len = len;
-			//fprintf(stderr, "%c", *p);
 			cur = new_token(TK_RESERVED, cur, p++, line);
 			cur->len = 1;
 			string = 0;
@@ -78,7 +77,6 @@ Token *tokenize(char *p) {
 		if (string == 2) {
 			int len = 0;
 			while (*p != '\"') {
-				//fprintf(stderr, "%c", *p);
 				if (*p == '\\') {
 					p++;
 					len++;
@@ -86,9 +84,8 @@ Token *tokenize(char *p) {
 				p++;
 				len++;
 			}
-			cur = new_token(TK_STRING, cur, p-len, line);
+			cur = new_token(TK_STRING, cur, p - len, line);
 			cur->len = len;
-			//fprintf(stderr, "%c", *p);
 			cur = new_token(TK_RESERVED, cur, p++, line);
 			cur->len = 1;
 			string = 0;
@@ -133,14 +130,12 @@ Token *tokenize(char *p) {
 
 		if (*p == '\"') {
 			string = 2;
-			//fprintf(stderr, "%c", *p);
 			cur = new_token(TK_RESERVED, cur, p++, line);
 			cur->len = 1;
 			continue;
 		}
 		if (*p == '\'') {
 			string = 1;
-			//fprintf(stderr, "%c", *p);
 			cur = new_token(TK_RESERVED, cur, p++, line);
 			cur->len = 1;
 			continue;
@@ -226,17 +221,24 @@ Token *tokenize(char *p) {
 					break;
 				}
 			}
-			cur = new_token(TK_IDENT, cur, p-len, line);
+			cur = new_token(TK_IDENT, cur, p - len, line);
 			cur->len = len;
-			//fprintf(stderr, "%d\n", len);
 			continue;
 		}
 
-		error("cannot tokenize %c", *p);
+		fprintf(stderr, "cannot tokenize %c", *p);
+		exit(1);
 	}
 
 	new_token(TK_EOF, cur, p, line);
-	//fprintf(stderr, "\n");
+	Token *tiktok = head.next;
+	/* while (tiktok->kind != TK_EOF) { */
+	/* 	current_token(tiktok); */
+	/* 	if (tiktok->len == 0) { */
+	/* 		fprintf(stderr, "uooooooooooooooooooooooooo"); */
+	/* 	} */
+	/* 	tiktok = tiktok->next; */
+	/* } */
 	return head.next;
 }
 

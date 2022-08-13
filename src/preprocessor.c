@@ -107,11 +107,16 @@ Token *preprocessor(Token *tok) {
 				continue;
 
 			}else if (preconsume(&tok, "endif")) {
+				if (tok->kind == TK_EOF) {
+					begin->next = tok;
+					tok = begin;
+					continue;
+				}
 				tok = tok->next;
 
 				// 改行までいったら終了
 				Token *end;
-				while (true) {
+				while (tok->next) {
 					if (*(tok->next->str) == '\\') {
 						tok->next = tok->next->next;
 					}
@@ -131,11 +136,10 @@ Token *preprocessor(Token *tok) {
 
 				continue;
 			}else if (preconsume(&tok, "ifndef")) {
-				tok = tok->next;
-
 				// 改行までいったら終了
 				Token *end;
 				while (true) {
+					current_token(tok);
 					if (*(tok->next->str) == '\\') {
 						tok->next = tok->next->next;
 					}
@@ -149,11 +153,11 @@ Token *preprocessor(Token *tok) {
 					tok = tok->next;
 				}
 
-				// endif文を消す
+				// ifndef文を消す
 				begin->next = end;
 				tok = begin;
-
 				continue;
+
 			}else if (preconsume(&tok, "include")) {
 				// begin: #の前, end: 
 				Token *end, *src = NULL;
@@ -166,8 +170,11 @@ Token *preprocessor(Token *tok) {
 					char file[100];
 					strncpy(file, prefile->str, prefile->len);
 					file[prefile->len] = '\0';
+					fprintf(stderr, "reading file: %s\n", file);
 					src = tokenize(read_file(file));
+					src = preprocessor(src);
 					end = tok;
+					fprintf(stderr, "complete tokenize of %s\n", file);
 
 				}else if (preconsume(&tok, "<")) {
 					tok = tok->next;
@@ -179,21 +186,25 @@ Token *preprocessor(Token *tok) {
 					end = tok;
 				}
 
-				// 生成
+				// 生成 begin -> include file -> end
 				if (src) {
 					begin->next = src;
 					while (src->next->kind != TK_EOF) {
 						src = src->next;
 					}
 					src->next = end;
-					tok = begin;
+					tok = src;
 				}else{
 					begin->next = end;
+					tok = begin;
 				}
+				continue;
 			}
+		}else{
+			tok = tok->next;
 		}
 
-		// 探索
+		// define 探索
 		Token *back_token = tok;
 		for (int i = 0;i < 100;i++) {
 			if (!defines[i]) break;
@@ -262,7 +273,7 @@ Token *preprocessor(Token *tok) {
 				tok = begin;
 			}
 		}
-		tok = tok->next;
+		/* tok = tok->next; */
 	}
 	return init_tok->next;
 }

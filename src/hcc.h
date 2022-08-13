@@ -189,8 +189,9 @@ extern Vec *strings;
 extern Vec *typedef_list;
 extern Vec *aggr_list;
 
-void error(char *fmt, ...);
-void error_at(char *loc, char *fmt, ...);
+/* void error(char *fmt, ...); */
+void error_at(char *loc, char *fmt);
+void current_token(Token *tok);
 
 #ifndef __STDC__
 /*
@@ -199,9 +200,11 @@ void error_at(char *loc, char *fmt, ...);
 
 
 // malloc系
+
 void *calloc(int nitems, int size);
 void *malloc (int size);
 void *realloc(void *ptr, int size);
+
 
 // 文字列系
 int strncmp(char *str1, char *str2, int num);

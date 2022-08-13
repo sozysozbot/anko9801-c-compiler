@@ -94,7 +94,7 @@ void gen_global_array(Node *lhs, Node *rhs) {
 			break;
 
 		default:
-			node_kind_print(rhs);
+			/* node_kind_print(rhs); */
 			break;
 	}
 }
@@ -239,12 +239,12 @@ void gen_funcs(Func *funcs) {
 
 void gen_push(char *reg) {
 	printf("	push %s\n", reg);
-	rsp += 8;
+	stack_pointer += 8;
 }
 
 void gen_pop(char *reg) {
 	printf("	pop %s\n", reg);
-	rsp -= 8;
+	stack_pointer -= 8;
 }
 
 void gen_pre(Node **code, Func *funcs, Func *extern_funcs) {
@@ -373,7 +373,8 @@ char *gen_cond(Node *node) {
 				return "jne";
 			default:
 				return "je";
-				error("条件式の中に知らないものが入ってます\n");
+				fprintf(stderr, "条件式の中に知らないものが入ってます\n");
+				exit(1);
 				return NULL;
 		}
 	}
@@ -630,7 +631,6 @@ void gen(Node *node) {
 		pre_loop = cur_loop;
 		cur_loop.which = 3;
 		cur_loop.nth = switch_cnt;
-		fprintf(stderr, "%d\n", stderr);
 
 		Node *node_case;
 
@@ -827,7 +827,8 @@ void gen(Node *node) {
 		break;
 
 	default:
-		error("I don't know this nodekind\n");
+		fprintf(stderr, "I don't know this nodekind\n");
+		exit(1);
 	}
 
 	gen_push(regs64[RAX]);

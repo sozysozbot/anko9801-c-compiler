@@ -1,20 +1,18 @@
 #include "hcc.h"
-#if 0
-FILE *stderr = -1282248128;
-#endif
+/* FILE *stderr = -1282248128; */
 // 指定されたファイルの内容を返す
 char *read_file(char *path) {
 	// ファイルを開く
 	FILE *fp = fopen(path, "r");
 	if (!fp)
-		error("cannot open %s: %s", path, strerror(errno));
+		fprintf(stderr, "cannot open %s: %s", path, strerror(0));
 
 	// ファイルの長さを調べる
-	if (fseek(fp, 0, SEEK_END) == -1)
-		error("%s: fseek: %s", path, strerror(errno));
+	if (fseek(fp, 0, 3) == -1)
+		fprintf(stderr, "%s: fseek: %s", path, strerror(0));
 	size_t size = ftell(fp);
-	if (fseek(fp, 0, SEEK_SET) == -1)
-		error("%s: fseek: %s", path, strerror(errno));
+	if (fseek(fp, 0, 1) == -1)
+		fprintf(stderr, "%s: fseek: %s", path, strerror(0));
 
 	// ファイル内容を読み込む
 	char *buf = calloc(1, size + 2);

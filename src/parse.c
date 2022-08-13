@@ -306,6 +306,10 @@ Func *new_func(Func *pre, Token *tok, Type *type, LVar *args) {
 	func->args = args;
 	func->locals = args;
 	func->type = type;
+	char test[100];
+	strncpy(test, func->name, func->len);
+	test[func->len] = 0;
+	fprintf(stderr, "%s\n", test);
 	return func;
 }
 
@@ -317,6 +321,10 @@ LVar *find_lvar(Token *tok) {
 	Hashs *hash = search_hash(hashs, cur_scope);
 	for (;hash;hash = hash->parent) {
 		for (LVar *var = hash->vars; var; var = var->next) {
+			char test[100];
+			strncpy(test, var->name, var->len);
+			test[var->len] = 0;
+			/* fprintf(stderr, "%s\n", test); */
 			if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
 				return var;
 		}
@@ -346,12 +354,24 @@ LVar *search_enum_lvar(Hashs *hash, Token *tok) {
 
 Func *find_func(Token *tok) {
 	for (Func *func = funcs; func; func = func->next) {
-		if (func->len == tok->len && !memcmp(tok->str, func->name, func->len))
+		/* char test[100]; */
+		/* strncpy(test, func->name, func->len); */
+		/* test[func->len] = 0; */
+		/* fprintf(stderr, "%s\n", test); */
+		if (func->len == tok->len && !memcmp(tok->str, func->name, func->len)) {
+			/* fprintf(stderr, "\n"); */
 			return func;
+		}
 	}
 	for (Func *func = extern_funcs; func; func = func->next) {
-		if (func->len == tok->len && !memcmp(tok->str, func->name, func->len))
+		/* char test[100]; */
+		/* strncpy(test, func->name, func->len); */
+		/* test[func->len] = 0; */
+		/* fprintf(stderr, "%s\n", test); */
+		if (func->len == tok->len && !memcmp(tok->str, func->name, func->len)) {
+			/* fprintf(stderr, "\n"); */
 			return func;
+		}
 	}
 	return NULL;
 }
@@ -611,8 +631,6 @@ Node *variable() {
 
 Node *term() {
 	// 次のトークンが"("なら、"(" expr ")"のはず
-	//cu();
-
 	Node *node;
 	if (consume("(")) {
 		node = expr();
@@ -1214,7 +1232,7 @@ Node *stmt() {
 			Else = stmts();
 		else
 			Else = NULL;
-		fprintf(stderr, "if end\n");
+		/* fprintf(stderr, "if end\n"); */
 
 		node = new_node_if(ND_IF, Cond, Then, Else);
 
@@ -1281,7 +1299,8 @@ Node *stmts() {
 		while (true) {
 			Node *statement = stmt();
 			if (!statement && strncmp("}", token->str, token->len)) {
-				error("unknown statement\n");
+				fprintf(stderr, "unknown statement\n");
+				exit(1);
 			}
 
 			push_back(nodes, statement);
@@ -1697,7 +1716,6 @@ bool include_file() {
 				strncpy(str, tok->str, tok->len);
 				str[tok->len] = '\0';
 				Token *kari = token;
-				//printf("compile %s\n", str);
 				compile_at(str);
 				token = kari;
 				expect("\"");
@@ -1724,7 +1742,7 @@ Node *global() {
 	node = variable_decl(1);
 	if (node) return node;
 	node = func_decl_or_def();
-	fprintf(stderr, "stmt end\n");
+	/* fprintf(stderr, "stmt end\n"); */
 	if (node) return node;
 
 	return stmt();

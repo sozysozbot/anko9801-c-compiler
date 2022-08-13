@@ -3,12 +3,40 @@
 
 // エラーを報告するための関数
 // printfと同じ引数を取る
-void error(char *fmt, ...) {
-	va_list ap;
-	va_start(ap, fmt);
-	vfprintf(stderr, fmt, ap);
-	fprintf(stderr, "\n");
-	exit(1);
+/* void error(char *fmt, ...) { */
+/* 	va_list ap; */
+/* 	va_start(ap, fmt); */
+/* 	vfprintf(stderr, fmt, ap); */
+/* 	fprintf(stderr, "\n"); */
+/* 	exit(1); */
+/* } */
+
+void current_token(Token *tok) {
+	char buf[100];
+	strncpy(buf, tok->str, tok->len);
+	buf[tok->len] = 0;
+	fprintf(stderr, "Current token is: %s(%d, ", buf, tok->len);
+	switch (tok->kind) {
+	case TK_RESERVED:
+		fprintf(stderr, "reserved");
+		break;
+	case TK_NUM:
+		fprintf(stderr, "num");
+		break;
+	case TK_STRING:
+		fprintf(stderr, "string");
+		break;
+	case TK_IDENT:
+		fprintf(stderr, "ident");
+		break;
+	case TK_RETURN:
+		fprintf(stderr, "return");
+		break;
+	case TK_EOF:
+		fprintf(stderr, "EOF");
+		break;
+	}
+	fprintf(stderr, ")\n");
 }
 
 // エラーの起きた場所を報告するための関数
@@ -16,7 +44,7 @@ void error(char *fmt, ...) {
 //
 // foo.c:10: x = y + + 5;
 //                   ^ 式ではありません
-void error_at(char *loc, char *fmt, ...) {
+void error_at(char *loc, char *fmt) {
 	// locが含まれている行の開始地点と終了地点を取得
 	char *line = loc;
 	int tab_num = 0;
@@ -46,10 +74,9 @@ void error_at(char *loc, char *fmt, ...) {
 	for (int i = 0;i < tab_num;i++)
 		fprintf(stderr, "\t");
 	fprintf(stderr, "%*s", pos-1, "");
-	va_list ap;
-	va_start(ap, fmt);
+
 	fprintf(stderr, "^ ");
-	vfprintf(stderr, fmt, ap);
+	fprintf(stderr, fmt);
 	fprintf(stderr, "\n");
 	exit(1);
 }
@@ -57,9 +84,11 @@ void error_at(char *loc, char *fmt, ...) {
 // 次のトークンが期待している記号のときには、トークンを1つ読み進める。
 // それ以外の場合にはエラーを報告する。
 void expect(char *op) {
-	if (token->kind != TK_RESERVED || memcmp(token->str, op, strlen(op)))
-		// error("'%c'ではありません", op);
-		error_at(token->str, "'%s' is expected, but %s", op, get_name(token->str, token->len));
+	if (token->kind != TK_RESERVED || memcmp(token->str, op, strlen(op))) {
+		char buf[100];
+		sprintf(buf, "'%s' is expected, but %s", op, get_name(token->str, token->len));
+		error_at(token->str, buf);
+	}
 	token = token->next;
 }
 
