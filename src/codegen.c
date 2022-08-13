@@ -485,6 +485,8 @@ void gen(Node *node) {
 	case ND_RETURN:
 		gen(node->side[0]);
 		//for (int i = 0;rsp != 8;i++)
+    printf("  pop rax\n");
+    printf("  mov rsp,rbp\n");
 		gen_pop("rbp");
 		printf("	ret\n");
 		return;
