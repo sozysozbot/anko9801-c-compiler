@@ -290,7 +290,7 @@ void gen_lvalue(Node *node) {
 			printf("	lea rax, [rbp-%d]\n", node->var->offset);
 			gen_push(regs64[RAX]);
 		}else{
-			printf("	lea rax, %s [rip + %s@GOTPCREL]\n", gen_type(node->var->type), get_name(node->var->name, node->var->len));
+			printf("	mov rax, %s [rip + %s@GOTPCREL]\n", gen_type(node->var->type), get_name(node->var->name, node->var->len));
 			gen_push(regs64[RAX]);
 		}
 		return;

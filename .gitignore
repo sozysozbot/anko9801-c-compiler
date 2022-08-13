@@ -3,3 +3,6 @@
 tmp*
 *.txt
 .gdb_history
+*.s
+./src/hcc
+./selfhost/hcc_self

@@ -317,10 +317,6 @@ LVar *find_lvar(Token *tok) {
 	Hashs *hash = search_hash(hashs, cur_scope);
 	for (;hash;hash = hash->parent) {
 		for (LVar *var = hash->vars; var; var = var->next) {
-			char test[100];
-			strncpy(test, var->name, var->len);
-			test[var->len] = 0;
-			/* fprintf(stderr, "%s\n", test); */
 			if (var->len == tok->len && !memcmp(tok->str, var->name, var->len))
 				return var;
 		}
@@ -350,22 +346,12 @@ LVar *search_enum_lvar(Hashs *hash, Token *tok) {
 
 Func *find_func(Token *tok) {
 	for (Func *func = funcs; func; func = func->next) {
-		/* char test[100]; */
-		/* strncpy(test, func->name, func->len); */
-		/* test[func->len] = 0; */
-		/* fprintf(stderr, "%s\n", test); */
 		if (func->len == tok->len && !memcmp(tok->str, func->name, func->len)) {
-			/* fprintf(stderr, "\n"); */
 			return func;
 		}
 	}
 	for (Func *func = extern_funcs; func; func = func->next) {
-		/* char test[100]; */
-		/* strncpy(test, func->name, func->len); */
-		/* test[func->len] = 0; */
-		/* fprintf(stderr, "%s\n", test); */
 		if (func->len == tok->len && !memcmp(tok->str, func->name, func->len)) {
-			/* fprintf(stderr, "\n"); */
 			return func;
 		}
 	}
@@ -422,65 +408,6 @@ Typedef *find_typedef(char *str, int len) {
 void add_code(Node *node) {
 	code[pos++] = node;
 }
-
-/*
- * 出力系
- */
-/*
-void cu() {
-	int line = 0;
-	fprintf(stderr, "----start-----\n");
-	Token *tok = token;
-	if (!tok) return;
-	if (tok->kind == TK_EOF) return;
-	for (int i = 0;line < 5;i++) {
-		fprintf(stderr, "%s ", get_name(tok->str, tok->len));
-		if (*(tok->str + tok->len) == '\n') {
-			fprintf(stderr, "\n");
-			line++;
-		}
-		tok = tok->next;
-		if (i == 100) break;
-		if (!tok->next) break;
-	}
-	fprintf(stderr, "\n");
-}
-
-void print_variable_scope(Hashs *hash, int tab) {
-	for (int i = 0;i < tab;i++)
-		fprintf(stderr, "\t");
-	if (hash->scope)
-		fprintf(stderr, "%s %s\n", print_type(hash->scope->type), get_name(hash->scope->name, hash->scope->len));
-	else
-		fprintf(stderr, "<Global>\n");
-
-	for (LVar *lvar = hash->vars; lvar; lvar = lvar->next) {
-		for (int i = 0;i < tab+1;i++)
-			fprintf(stderr, "\t");
-		if (lvar->type) {
-			fprintf(stderr, "%s %s\n", print_type(lvar->type), get_name(lvar->name, lvar->len));
-			if (lvar->type->ptr_to) {
-				for (int i = 0;i < tab+2;i++)
-					fprintf(stderr, "\t");
-				fprintf(stderr, "%s %s\n", print_type(lvar->type->ptr_to), get_name(lvar->name, lvar->len), lvar->scope);
-				if (lvar->type->ptr_to->ptr_to) {
-					for (int i = 0;i < tab+3;i++)
-						fprintf(stderr, "\t");
-					fprintf(stderr, "%s %s\n", print_type(lvar->type->ptr_to->ptr_to), get_name(lvar->name, lvar->len), lvar->scope);
-				}
-			}
-		}else{
-			fprintf(stderr, "...\n");
-		}
-	}
-	Hashs *hash_next;
-	for (int i = 0;i < hash->child->len;i++) {
-		hash_next = (Hashs *)hash->child->data[i];
-		print_variable_scope(hash_next, tab+1);
-	}
-}
-*/
-
 
 /*
  * パーサ本体
@@ -1228,7 +1155,6 @@ Node *stmt() {
 			Else = stmts();
 		else
 			Else = NULL;
-		/* fprintf(stderr, "if end\n"); */
 
 		node = new_node_if(ND_IF, Cond, Then, Else);
 
@@ -1738,7 +1664,6 @@ Node *global() {
 	node = variable_decl(1);
 	if (node) return node;
 	node = func_decl_or_def();
-	/* fprintf(stderr, "stmt end\n"); */
 	if (node) return node;
 
 	return stmt();
