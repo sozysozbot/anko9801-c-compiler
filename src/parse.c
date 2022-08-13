@@ -306,10 +306,6 @@ Func *new_func(Func *pre, Token *tok, Type *type, LVar *args) {
 	func->args = args;
 	func->locals = args;
 	func->type = type;
-	char test[100];
-	strncpy(test, func->name, func->len);
-	test[func->len] = 0;
-	fprintf(stderr, "%s\n", test);
 	return func;
 }
 
