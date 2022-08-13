@@ -31,9 +31,6 @@ selfhost: $(OBJS:%=../selfhost/%)
 	$(CC) -o ../selfhost/hcc_self $(OBJS:%=../selfhost/%)
 
 clean:
-	rm -f *.o *.s ../selfhost/*.o ../selfhost/*.s
-
-clean_all:
 	rm -f hcc *.o *.s ../selfhost/*.o ../selfhost/*.s
 
 .PHONY: test% clean
