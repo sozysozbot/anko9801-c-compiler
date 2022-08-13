@@ -4,15 +4,21 @@
 char *read_file(char *path) {
 	// ファイルを開く
 	FILE *fp = fopen(path, "r");
-	if (!fp)
-		fprintf(stderr, "cannot open %s: %s", path, strerror(0));
+	if (!fp) {
+		fprintf(stderr, "cannot open %s: %s", path, strerror(1));
+		exit(1);
+	}
 
 	// ファイルの長さを調べる
-	if (fseek(fp, 0, 3) == -1)
-		fprintf(stderr, "%s: fseek: %s", path, strerror(0));
-	size_t size = ftell(fp);
-	if (fseek(fp, 0, 1) == -1)
-		fprintf(stderr, "%s: fseek: %s", path, strerror(0));
+	if (fseek(fp, 0, 2) == -1) {
+		fprintf(stderr, "%s: fseek: %s", path, strerror(1));
+		exit(1);
+	}
+	int size = ftell(fp);
+	if (fseek(fp, 0, 0) == -1) {
+		fprintf(stderr, "%s: fseek: %s", path, strerror(1));
+		exit(1);
+	}
 
 	// ファイル内容を読み込む
 	char *buf = calloc(1, size + 2);
